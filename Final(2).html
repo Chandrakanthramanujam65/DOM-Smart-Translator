@@ -29,7 +29,7 @@
 <body>
     <div class="container">
         <h1>🤖 Meet <span style="color: cyan;">DOM</span> - Your Smart Translator</h1>
-        <button onclick="speakText()">🎤 Speak</button>
+        <button onclick="startSpeechRecognition()">🎤 Speak</button>
         <textarea id="text" placeholder="Type or Speak"></textarea><br>
         <button onclick="translateText()">🌍 Translate</button>
         <select id="language">
@@ -58,7 +58,8 @@
         <div style="background: #4a5568; padding: 15px; border-radius: 10px; margin-top: 10px;">
             <h2>📜 DOM's Translation:</h2>
             <p id="translated"></p>
-            <button onclick="speakTranslation()">🔊 Speak</button>
+            <button onclick="speakTranslation()">🔊 Speak Translation</button>
+            <audio id="audioPlayer" controls style="display:none;"></audio>
         </div>
     </div>
     
@@ -66,26 +67,39 @@
         async function translateText() {
             const text = document.getElementById("text").value;
             const language = document.getElementById("language").value;
-            if (!text) return;
-            const res = await fetch(`http://127.0.0.1:8000/translate?text=${text}&target_lang=${language}`);
+            if (!text) return alert("Please enter some text to translate!");
+            const res = await fetch(`http://127.0.0.1:8000/translate?text=${encodeURIComponent(text)}&target_lang=${language}`);
             const data = await res.json();
             document.getElementById("translated").innerText = data.translated_text;
         }
         
-        function speakText() {
-            const text = document.getElementById("text").value;
-            if (!text) return;
-            let speech = new SpeechSynthesisUtterance(text);
-            speech.lang = 'en';
-            window.speechSynthesis.speak(speech);
-        }
-        
-        function speakTranslation() {
+        async function speakTranslation() {
             const translatedText = document.getElementById("translated").innerText;
-            if (!translatedText) return;
-            let speech = new SpeechSynthesisUtterance(translatedText);
-            speech.lang = document.getElementById("language").value;
-            window.speechSynthesis.speak(speech);
+            const language = document.getElementById("language").value;
+            if (!translatedText) return alert("No translation available!");
+            const res = await fetch(`http://127.0.0.1:8000/speech?text=${encodeURIComponent(translatedText)}&lang=${language}`);
+            if (res.ok) {
+                const audioPlayer = document.getElementById("audioPlayer");
+                audioPlayer.src = res.url;
+                audioPlayer.style.display = "block";
+                audioPlayer.play();
+            } else {
+                alert("Error in generating speech.");
+            }
+        }
+
+        function startSpeechRecognition() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.start();
+            
+            recognition.onresult = function(event) {
+                document.getElementById("text").value = event.results[0][0].transcript;
+            };
+
+            recognition.onerror = function(event) {
+                alert("Speech recognition error: " + event.error);
+            };
         }
     </script>
 </body>

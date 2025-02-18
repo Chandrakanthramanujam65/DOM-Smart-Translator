@@ -1,7 +1,0 @@
-fastapi
-uvicorn
-openai
-speechrecognition
-pydantic
-deep-translator
-pyttsx3

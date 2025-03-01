@@ -25,7 +25,7 @@ SUPPORTED_LANGUAGES = [
 ]
 
 # Define frontend file path
-FRONTEND_FILE = os.path.join(os.getcwd(), "final.html")
+FRONTEND_FILE = os.path.join(os.path.dirname(__file__), "final.html")
 
 # Serve final.html as the main UI
 @app.get("/")

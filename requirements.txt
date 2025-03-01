@@ -7,4 +7,4 @@ opencv-python
 requests
 googletrans==4.0.0-rc1
 gtts
- 
+deep-translator 

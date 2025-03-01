@@ -82,62 +82,52 @@
 
             try {
                 let response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
                 let data = await response.json();
-                console.log("Response:", data);
+                console.log("Response received:", data);
 
                 if (data.translated_text) {
                     document.getElementById("translated").innerText = data.translated_text;
+                    document.getElementById("translated").style.color = "cyan"; // ✅ Highlight output
                 } else {
-                    alert("Translation failed.");
+                    alert("Translation failed. No response received.");
                 }
             } catch (error) {
                 console.error("Error in translation:", error);
-                alert("Error in translation. Check console.");
+                alert("Translation failed. Check the console.");
             }
         }
-        
+
         async function speakTranslation() {
             const translatedText = document.getElementById("translated").innerText;
             const language = document.getElementById("language").value;
-
-            if (!translatedText) {
-                alert("No translation available!");
-                return;
-            }
-
-            const url = `${API_URL}/speech?text=${encodeURIComponent(translatedText)}&lang=${language}`;
-            console.log("Requesting speech:", url);
-
-            try {
-                let response = await fetch(url);
-                if (!response.ok) throw new Error("Speech generation failed");
-
+            if (!translatedText) return alert("No translation available!");
+            const res = await fetch(`http://127.0.0.1:8000/speech?text=${encodeURIComponent(translatedText)}&lang=${language}`);
+            if (res.ok) {
                 const audioPlayer = document.getElementById("audioPlayer");
-                audioPlayer.src = url;
+                audioPlayer.src = res.url;
                 audioPlayer.style.display = "block";
                 audioPlayer.play();
-            } catch (error) {
-                console.error("Error in speech:", error);
-                alert("Error in generating speech. Check console.");
+            } else {
+                alert("Error in generating speech.");
             }
         }
 
         function startSpeechRecognition() {
-            try {
-                const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-                recognition.lang = 'en-US';
-                recognition.start();
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.start();
+            
+            recognition.onresult = function(event) {
+                document.getElementById("text").value = event.results[0][0].transcript;
+            };
 
-                recognition.onresult = function(event) {
-                    document.getElementById("text").value = event.results[0][0].transcript;
-                };
-
-                recognition.onerror = function(event) {
-                    alert("Speech recognition error: " + event.error);
-                };
-            } catch (error) {
-                alert("Speech recognition is not supported in this browser.");
-            }
+            recognition.onerror = function(event) {
+                alert("Speech recognition error: " + event.error);
+            };
         }
     </script>
 </body>

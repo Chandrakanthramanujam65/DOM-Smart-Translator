@@ -66,7 +66,7 @@
     <div class="footer">Brought to you by <strong>Chandrakanth</strong></div>
     
     <script>
-        const API_URL = "https://dom-smart-translator-production.up.railway.app"; 
+        const API_URL = "https://dom-smart-translator-production.up.railway.app"; // Use your Railway URL for the translation API
 
         async function translateText() {
             const text = document.getElementById("text").value;
@@ -105,7 +105,10 @@
             const translatedText = document.getElementById("translated").innerText;
             const language = document.getElementById("language").value;
             if (!translatedText) return alert("No translation available!");
-            const res = await fetch(`http://127.0.0.1:8000/speech?text=${encodeURIComponent(translatedText)}&lang=${language}`);
+
+            // Update the URL to the deployed Railway app
+            const res = await fetch(`https://dom-smart-translator-production.up.railway.app/speech?text=${encodeURIComponent(translatedText)}&lang=${language}`);
+
             if (res.ok) {
                 const audioPlayer = document.getElementById("audioPlayer");
                 audioPlayer.src = res.url;

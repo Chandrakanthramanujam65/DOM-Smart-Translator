@@ -66,44 +66,79 @@
     <div class="footer">Brought to you by <strong>Chandrakanth</strong></div>
     
     <script>
+        const API_URL = "https://dom-smart-translator-production.up.railway.app"; 
+
         async function translateText() {
             const text = document.getElementById("text").value;
             const language = document.getElementById("language").value;
-            if (!text) return alert("Please enter some text to translate!");
-            const res = await fetch(`http://127.0.0.1:8000/translate?text=${encodeURIComponent(text)}&target_lang=${language}`);
-            const data = await res.json();
-            document.getElementById("translated").innerText = data.translated_text;
+
+            if (!text) {
+                alert("Please enter some text to translate!");
+                return;
+            }
+
+            const url = `${API_URL}/translate?text=${encodeURIComponent(text)}&target_lang=${language}`;
+            console.log("Requesting:", url);
+
+            try {
+                let response = await fetch(url);
+                let data = await response.json();
+                console.log("Response:", data);
+
+                if (data.translated_text) {
+                    document.getElementById("translated").innerText = data.translated_text;
+                } else {
+                    alert("Translation failed.");
+                }
+            } catch (error) {
+                console.error("Error in translation:", error);
+                alert("Error in translation. Check console.");
+            }
         }
         
         async function speakTranslation() {
             const translatedText = document.getElementById("translated").innerText;
             const language = document.getElementById("language").value;
-            if (!translatedText) return alert("No translation available!");
-            const res = await fetch(`http://127.0.0.1:8000/speech?text=${encodeURIComponent(translatedText)}&lang=${language}`);
-            if (res.ok) {
+
+            if (!translatedText) {
+                alert("No translation available!");
+                return;
+            }
+
+            const url = `${API_URL}/speech?text=${encodeURIComponent(translatedText)}&lang=${language}`;
+            console.log("Requesting speech:", url);
+
+            try {
+                let response = await fetch(url);
+                if (!response.ok) throw new Error("Speech generation failed");
+
                 const audioPlayer = document.getElementById("audioPlayer");
-                audioPlayer.src = res.url;
+                audioPlayer.src = url;
                 audioPlayer.style.display = "block";
                 audioPlayer.play();
-            } else {
-                alert("Error in generating speech.");
+            } catch (error) {
+                console.error("Error in speech:", error);
+                alert("Error in generating speech. Check console.");
             }
         }
 
         function startSpeechRecognition() {
-            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = 'en-US';
-            recognition.start();
-            
-            recognition.onresult = function(event) {
-                document.getElementById("text").value = event.results[0][0].transcript;
-            };
+            try {
+                const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+                recognition.lang = 'en-US';
+                recognition.start();
 
-            recognition.onerror = function(event) {
-                alert("Speech recognition error: " + event.error);
-            };
+                recognition.onresult = function(event) {
+                    document.getElementById("text").value = event.results[0][0].transcript;
+                };
+
+                recognition.onerror = function(event) {
+                    alert("Speech recognition error: " + event.error);
+                };
+            } catch (error) {
+                alert("Speech recognition is not supported in this browser.");
+            }
         }
     </script>
 </body>
 </html>
- 

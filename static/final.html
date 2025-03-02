@@ -66,71 +66,69 @@
     <div class="footer">Brought to you by <strong>Chandrakanth</strong></div>
     
     <script>
-        const API_URL = "https://dom-smart-translator-production.up.railway.app"; // Use your Railway URL for the translation API
+    const API_URL = "https://dom-smart-translator-production.up.railway.app"; // Use your Railway URL for the translation API
 
-        async function translateText() {
-            const text = document.getElementById("text").value;
-            const language = document.getElementById("language").value;
+    async function translateText() {
+        const text = document.getElementById("text").value;
+        const language = document.getElementById("language").value;
 
-            if (!text) {
-                alert("Please enter some text to translate!");
-                return;
-            }
-
-            const url = `${API_URL}/translate?text=${encodeURIComponent(text)}&target_lang=${language}`;
-            console.log("Requesting:", url);
-
-            try {
-                let response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-
-                let data = await response.json();
-                console.log("Response received:", data);
-
-                if (data.translated_text) {
-                    document.getElementById("translated").innerText = data.translated_text;
-                    document.getElementById("translated").style.color = "cyan"; // ✅ Highlight output
-                } else {
-                    alert("Translation failed. No response received.");
-                }
-            } catch (error) {
-                console.error("Error in translation:", error);
-                alert("Translation failed. Check the console.");
-            }
+        if (!text) {
+            alert("Please enter some text to translate!");
+            return;
         }
 
-        async function speakTranslation() {
-            const translatedText = document.getElementById("translated").innerText;
-            const language = document.getElementById("language").value;
-            if (!translatedText) return alert("No translation available!");
+        const url = `${API_URL}/translate?text=${encodeURIComponent(text)}&target_lang=${language}`;
+        console.log("Requesting:", url);
 
-            const res = await fetch(`${API_URL}/speech?text=${encodeURIComponent(translatedText)}&lang=${language}`);
+        try {
+            let response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
 
-            if (res.ok) {
-                const audioPlayer = document.getElementById("audioPlayer");
-                audioPlayer.src = res.url;
-                audioPlayer.style.display = "block";
-                audioPlayer.play();
+            let data = await response.json();
+            console.log("Response received:", data);
+
+            if (data.translated_text) {
+                document.getElementById("translated").innerText = data.translated_text;
+                document.getElementById("translated").style.color = "cyan"; // ✅ Highlight output
             } else {
-                alert("Error in generating speech.");
+                alert("Translation failed. No response received.");
             }
+        } catch (error) {
+            console.error("Error in translation:", error);
+            alert("Translation failed. Check the console.");
         }
+    }
 
-        function startSpeechRecognition() {
-            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = 'en-US';
-            recognition.start();
-            
-            recognition.onresult = function(event) {
-                document.getElementById("text").value = event.results[0][0].transcript;
-            };
+    async function speakTranslation() {
+        const translatedText = document.getElementById("translated").innerText;
+        const language = document.getElementById("language").value;
+        if (!translatedText) return alert("No translation available!");
 
-            recognition.onerror = function(event) {
-                alert("Speech recognition error: " + event.error);
-            };
+        const res = await fetch(`${API_URL}/speech?text=${encodeURIComponent(translatedText)}&lang=${language}`);
+
+        if (res.ok) {
+            const audioPlayer = document.getElementById("audioPlayer");
+            audioPlayer.src = res.url;
+            audioPlayer.style.display = "block";
+            audioPlayer.play();
+        } else {
+            alert("Error in generating speech.");
         }
-    </script>
-</body>
-</html>
+    }
+
+    function startSpeechRecognition() {
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+        recognition.start();
+        
+        recognition.onresult = function(event) {
+            document.getElementById("text").value = event.results[0][0].transcript;
+        };
+
+        recognition.onerror = function(event) {
+            alert("Speech recognition error: " + event.error);
+        };
+    }
+</script>

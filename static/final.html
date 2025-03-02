@@ -106,8 +106,7 @@
             const language = document.getElementById("language").value;
             if (!translatedText) return alert("No translation available!");
 
-            // Update the URL to the deployed Railway app
-            const res = await fetch(`https://dom-smart-translator-production.up.railway.app/speech?text=${encodeURIComponent(translatedText)}&lang=${language}`);
+            const res = await fetch(`${API_URL}/speech?text=${encodeURIComponent(translatedText)}&lang=${language}`);
 
             if (res.ok) {
                 const audioPlayer = document.getElementById("audioPlayer");

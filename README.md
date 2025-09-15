@@ -20,7 +20,7 @@ cd DOM-Smart-Translator
 pip install -r requirements.txt
 ### 4️⃣ Run the Application
 python main.py
-Open your browser and go to: http://127.0.0.1:5000/
+Open your browser and go to: http://127.0.0.1:8000/
 ### Usage
 Enter Text – Type the text you want to translate.
 

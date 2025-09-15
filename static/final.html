@@ -1,134 +1,360 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Meet DOM - Your Smart Translator</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1a202c;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
-        textarea, select, button {
-            margin: 10px;
-            padding: 10px;
-            font-size: 16px;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: #2d3748;
-            padding: 20px;
-            border-radius: 10px;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #1a202c;
+        color: white;
+        text-align: center;
+        padding: 20px;
+      }
+      textarea,
+      select,
+      button {
+        margin: 10px;
+        padding: 10px;
+        font-size: 16px;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        background: #2d3748;
+        padding: 20px;
+        border-radius: 10px;
+      }
+      .footer {
+        margin-top: 30px;
+        font-size: 14px;
+        color: #a0aec0;
+      }
+      #loading {
+        display: none;
+        color: #fbbf24;
+        font-style: italic;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1>🤖 Meet <span style="color: cyan;">DOM</span> - Your Smart Translator</h1>
-        <button onclick="startSpeechRecognition()">🎤 Speak</button>
-        <textarea id="text" placeholder="Type or Speak"></textarea><br>
-        <button onclick="translateText()">🌍 Translate</button>
-        <select id="language">
-            <option value="en">English</option>
-            <option value="te">Telugu</option>
-            <option value="hi">Hindi</option>
-            <option value="fr">French</option>
-            <option value="es">Spanish</option>
-            <option value="de">German</option>
-            <option value="zh-CN">Chinese</option>
-            <option value="ja">Japanese</option>
-            <option value="ru">Russian</option>
-            <option value="ar">Arabic</option>
-            <option value="ko">Korean</option>
-            <option value="it">Italian</option>
-            <option value="pt">Portuguese</option>
-            <option value="tr">Turkish</option>
-            <option value="nl">Dutch</option>
-            <option value="bn">Bengali</option>
-            <option value="ta">Tamil</option>
-            <option value="ml">Malayalam</option>
-            <option value="gu">Gujarati</option>
-            <option value="mr">Marathi</option>
-            <option value="pa">Punjabi</option>
-        </select><br>
-        <div style="background: #4a5568; padding: 15px; border-radius: 10px; margin-top: 10px;">
-            <h2>📜 DOM's Translation:</h2>
-            <p id="translated"></p>
-            <button onclick="speakTranslation()">🔊 Speak Translation</button>
-            <audio id="audioPlayer" controls style="display:none;"></audio>
-        </div>
-    </div>
-    
-    <div class="footer">Brought to you by <strong>Chandrakanth</strong></div>
-    
-    <script>
-    const API_URL = "https://dom-smart-translator-production.up.railway.app"; // Use your Railway URL for the translation API
+      <h1>
+        🤖 Meet <span style="color: cyan">DOM</span> - Your Smart Translator
+      </h1>
+      <button onclick="startSpeechRecognition()">🎤 Speak</button>
+      <textarea
+        id="text"
+        placeholder="Type or Speak"
+        rows="4"
+        cols="50"
+      ></textarea
+      ><br />
+      <button onclick="translateText()">🌍 Translate</button>
+      <select id="language">
+        <option value="af">Afrikaans</option>
+        <option value="sq">Albanian</option>
+        <option value="am">Amharic</option>
+        <option value="ar">Arabic</option>
+        <option value="hy">Armenian</option>
+        <option value="as">Assamese</option>
+        <option value="ay">Aymara</option>
+        <option value="az">Azerbaijani</option>
+        <option value="bm">Bambara</option>
+        <option value="eu">Basque</option>
+        <option value="be">Belarusian</option>
+        <option value="bn">Bengali</option>
+        <option value="bho">Bhojpuri</option>
+        <option value="bs">Bosnian</option>
+        <option value="bg">Bulgarian</option>
+        <option value="ca">Catalan</option>
+        <option value="ceb">Cebuano</option>
+        <option value="ny">Chichewa</option>
+        <option value="zh-CN">Chinese (Simplified)</option>
+        <option value="zh-TW">Chinese (Traditional)</option>
+        <option value="co">Corsican</option>
+        <option value="hr">Croatian</option>
+        <option value="cs">Czech</option>
+        <option value="da">Danish</option>
+        <option value="dv">Dhivehi</option>
+        <option value="doi">Dogri</option>
+        <option value="nl">Dutch</option>
+        <option value="en" selected>English</option>
+        <option value="eo">Esperanto</option>
+        <option value="et">Estonian</option>
+        <option value="ee">Ewe</option>
+        <option value="tl">Filipino</option>
+        <option value="fi">Finnish</option>
+        <option value="fr">French</option>
+        <option value="fy">Frisian</option>
+        <option value="gl">Galician</option>
+        <option value="ka">Georgian</option>
+        <option value="de">German</option>
+        <option value="el">Greek</option>
+        <option value="gn">Guarani</option>
+        <option value="gu">Gujarati</option>
+        <option value="ht">Haitian Creole</option>
+        <option value="ha">Hausa</option>
+        <option value="haw">Hawaiian</option>
+        <option value="iw">Hebrew</option>
+        <option value="hi">Hindi</option>
+        <option value="hmn">Hmong</option>
+        <option value="hu">Hungarian</option>
+        <option value="is">Icelandic</option>
+        <option value="ig">Igbo</option>
+        <option value="ilo">Ilocano</option>
+        <option value="id">Indonesian</option>
+        <option value="ga">Irish</option>
+        <option value="it">Italian</option>
+        <option value="ja">Japanese</option>
+        <option value="jw">Javanese</option>
+        <option value="kn">Kannada</option>
+        <option value="kk">Kazakh</option>
+        <option value="km">Khmer</option>
+        <option value="rw">Kinyarwanda</option>
+        <option value="gom">Konkani</option>
+        <option value="ko">Korean</option>
+        <option value="kri">Krio</option>
+        <option value="ku">Kurdish (Kurmanji)</option>
+        <option value="ckb">Kurdish (Sorani)</option>
+        <option value="ky">Kyrgyz</option>
+        <option value="lo">Lao</option>
+        <option value="la">Latin</option>
+        <option value="lv">Latvian</option>
+        <option value="ln">Lingala</option>
+        <option value="lt">Lithuanian</option>
+        <option value="lg">Luganda</option>
+        <option value="lb">Luxembourgish</option>
+        <option value="mk">Macedonian</option>
+        <option value="mai">Maithili</option>
+        <option value="mg">Malagasy</option>
+        <option value="ms">Malay</option>
+        <option value="ml">Malayalam</option>
+        <option value="mt">Maltese</option>
+        <option value="mi">Maori</option>
+        <option value="mr">Marathi</option>
+        <option value="mni-Mtei">Meiteilon (Manipuri)</option>
+        <option value="lus">Mizo</option>
+        <option value="mn">Mongolian</option>
+        <option value="my">Myanmar</option>
+        <option value="ne">Nepali</option>
+        <option value="no">Norwegian</option>
+        <option value="or">Odia (Oriya)</option>
+        <option value="om">Oromo</option>
+        <option value="ps">Pashto</option>
+        <option value="fa">Persian</option>
+        <option value="pl">Polish</option>
+        <option value="pt">Portuguese</option>
+        <option value="pa">Punjabi</option>
+        <option value="qu">Quechua</option>
+        <option value="ro">Romanian</option>
+        <option value="ru">Russian</option>
+        <option value="sm">Samoan</option>
+        <option value="sa">Sanskrit</option>
+        <option value="gd">Scots Gaelic</option>
+        <option value="nso">Sepedi</option>
+        <option value="sr">Serbian</option>
+        <option value="st">Sesotho</option>
+        <option value="sn">Shona</option>
+        <option value="sd">Sindhi</option>
+        <option value="si">Sinhala</option>
+        <option value="sk">Slovak</option>
+        <option value="sl">Slovenian</option>
+        <option value="so">Somali</option>
+        <option value="es">Spanish</option>
+        <option value="su">Sundanese</option>
+        <option value="sw">Swahili</option>
+        <option value="sv">Swedish</option>
+        <option value="tg">Tajik</option>
+        <option value="ta">Tamil</option>
+        <option value="tt">Tatar</option>
+        <option value="te">Telugu</option>
+        <option value="th">Thai</option>
+        <option value="ti">Tigrinya</option>
+        <option value="ts">Tsonga</option>
+        <option value="tr">Turkish</option>
+        <option value="tk">Turkmen</option>
+        <option value="ak">Twi</option>
+        <option value="uk">Ukrainian</option>
+        <option value="ur">Urdu</option>
+        <option value="ug">Uyghur</option>
+        <option value="uz">Uzbek</option>
+        <option value="vi">Vietnamese</option>
+        <option value="cy">Welsh</option>
+        <option value="xh">Xhosa</option>
+        <option value="yi">Yiddish</option>
+        <option value="yo">Yoruba</option>
+        <option value="zu">Zulu</option></select
+      ><br />
 
-    async function translateText() {
-        const text = document.getElementById("text").value;
+      <div id="loading">⏳ Processing...</div>
+
+      <div
+        style="
+          background: #4a5568;
+          padding: 15px;
+          border-radius: 10px;
+          margin-top: 10px;
+        "
+      >
+        <h2>📜 DOM's Translation:</h2>
+        <p id="translated" style="min-height: 20px">
+          Translation will appear here...
+        </p>
+        <button onclick="speakTranslation()">🔊 Speak Translation</button>
+        <audio id="audioPlayer" controls style="display: none"></audio>
+      </div>
+    </div>
+
+    <div class="footer">Brought to you by <strong>Chandrakanth</strong></div>
+
+    <script>
+      // IMPORTANT: Make sure this matches your server port!
+      const API_URL = "http://127.0.0.1:8000";
+
+      console.log("DOM Translator loaded. API_URL:", API_URL);
+
+      async function translateText() {
+        const text = document.getElementById("text").value.trim();
         const language = document.getElementById("language").value;
+        const loading = document.getElementById("loading");
+        const translatedElement = document.getElementById("translated");
 
         if (!text) {
-            alert("Please enter some text to translate!");
-            return;
+          alert("Please enter some text to translate!");
+          return;
         }
 
-        const url = `${API_URL}/translate?text=${encodeURIComponent(text)}&target_lang=${language}`;
-        console.log("Requesting:", url);
+        // Show loading indicator
+        loading.style.display = "block";
+        translatedElement.innerText = "Translating...";
+        translatedElement.style.color = "#fbbf24";
+
+        const url = `${API_URL}/translate?text=${encodeURIComponent(
+          text
+        )}&target_lang=${language}`;
+        console.log("Making request to:", url);
 
         try {
-            let response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
+          let response = await fetch(url, {
+            method: "GET",
+            mode: "cors",
+          });
 
-            let data = await response.json();
-            console.log("Response received:", data);
+          console.log("Response status:", response.status);
 
-            if (data.translated_text) {
-                document.getElementById("translated").innerText = data.translated_text;
-                document.getElementById("translated").style.color = "cyan"; // ✅ Highlight output
-            } else {
-                alert("Translation failed. No response received.");
-            }
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          let data = await response.json();
+          console.log("Translation successful:", data);
+
+          if (data.translated_text) {
+            translatedElement.innerText = data.translated_text;
+            translatedElement.style.color = "cyan";
+          } else if (data.error) {
+            translatedElement.innerText = `Error: ${data.error}`;
+            translatedElement.style.color = "#ef4444";
+          } else {
+            throw new Error("No translation received");
+          }
         } catch (error) {
-            console.error("Error in translation:", error);
-            alert("Translation failed. Check the console.");
+          console.error("Translation failed:", error);
+          translatedElement.innerText = `Translation failed: ${error.message}`;
+          translatedElement.style.color = "#ef4444";
+        } finally {
+          loading.style.display = "none";
         }
-    }
+      }
 
-    async function speakTranslation() {
+      async function speakTranslation() {
         const translatedText = document.getElementById("translated").innerText;
         const language = document.getElementById("language").value;
-        if (!translatedText) return alert("No translation available!");
 
-        const res = await fetch(`${API_URL}/speech?text=${encodeURIComponent(translatedText)}&lang=${language}`);
+        if (
+          !translatedText ||
+          translatedText === "Translation will appear here..." ||
+          translatedText.startsWith("Error:") ||
+          translatedText.startsWith("Translation failed:")
+        ) {
+          alert("No valid translation available!");
+          return;
+        }
 
-        if (res.ok) {
+        try {
+          const url = `${API_URL}/speech?text=${encodeURIComponent(
+            translatedText
+          )}&lang=${language}`;
+          console.log("Speech request:", url);
+
+          const res = await fetch(url);
+
+          if (res.ok) {
+            const blob = await res.blob();
             const audioPlayer = document.getElementById("audioPlayer");
-            audioPlayer.src = res.url;
+
+            if (audioPlayer.src && audioPlayer.src.startsWith("blob:")) {
+              URL.revokeObjectURL(audioPlayer.src);
+            }
+
+            audioPlayer.src = URL.createObjectURL(blob);
             audioPlayer.style.display = "block";
             audioPlayer.play();
-        } else {
-            alert("Error in generating speech.");
+          } else {
+            const errorData = await res.json();
+            alert(
+              `Speech generation failed: ${errorData.error || "Unknown error"}`
+            );
+          }
+        } catch (error) {
+          console.error("Error in speech synthesis:", error);
+          alert("Speech synthesis failed. Check the console.");
         }
-    }
+      }
 
-    function startSpeechRecognition() {
-        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = 'en-US';
+      function startSpeechRecognition() {
+        if (
+          !("webkitSpeechRecognition" in window) &&
+          !("SpeechRecognition" in window)
+        ) {
+          alert(
+            "Speech recognition is not supported in this browser. Please use Chrome or Edge."
+          );
+          return;
+        }
+
+        const recognition = new (window.SpeechRecognition ||
+          window.webkitSpeechRecognition)();
+        recognition.lang = "en-US";
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
         recognition.start();
-        
-        recognition.onresult = function(event) {
-            document.getElementById("text").value = event.results[0][0].transcript;
+
+        recognition.onstart = function () {
+          console.log("Speech recognition started");
+          document.getElementById("text").placeholder = "Listening...";
         };
 
-        recognition.onerror = function(event) {
-            alert("Speech recognition error: " + event.error);
+        recognition.onresult = function (event) {
+          const transcript = event.results[0][0].transcript;
+          document.getElementById("text").value = transcript;
+          console.log("Speech recognized:", transcript);
         };
-    }
-</script>
+
+        recognition.onerror = function (event) {
+          console.error("Speech recognition error:", event.error);
+          alert("Speech recognition error: " + event.error);
+          document.getElementById("text").placeholder = "Type or Speak";
+        };
+
+        recognition.onend = function () {
+          console.log("Speech recognition ended");
+          document.getElementById("text").placeholder = "Type or Speak";
+        };
+      }
+    </script>
+  </body>
+</html>
